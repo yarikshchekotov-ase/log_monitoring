@@ -11,7 +11,7 @@ class LogManager():
             if os.path.exists(self.log_path):
                 path_size = os.path.getsize(self.log_path) # возвращает размер файла в байтах
                 if path_size > int(self.max_size): # проверка условия
-                    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
                     new_filename = f"log_{timestamp}_{os.path.basename(self.log_path)}"
                     os.rename(self.log_path, f"{new_filename}")
                     self.archiver.logs_in_dir(f"{new_filename}")
