@@ -1,6 +1,9 @@
 .venv/
 __pycache__/
 *.pyc
-*.log
-*.log.old
+*_log
+*_log_old
 config.json
+logs
+app_log.txt
+app_log_old.txt

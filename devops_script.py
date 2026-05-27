@@ -3,6 +3,7 @@ from loader import ConfigLoad
 from log_manager import LogManager
 import validators
 import logging
+from archiver import Archiver
 
 
 logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")
@@ -21,7 +22,8 @@ def main():
             valid_urls.append(url)
         else:
             logger.info("URL адрес не верный")
-    logmanager = LogManager(log_path, max_size)
+    archiver = Archiver("logs")
+    logmanager = LogManager(log_path, max_size, archiver)
     checker = Demon(valid_urls, log_path, logmanager)
     checker.checker()
 try:
