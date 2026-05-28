@@ -2,17 +2,20 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import time
 import logging
+from datetime import datetime
 
 def check_url(url):
         try:
             req = requests.get(url, timeout=5) # отправляем запрос на сайт
             logging.info(req.status_code)
+            time = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
             if req.status_code == 200: # смотрим статус кода
-                return f"[INFO] Website is up and running {url}\n"
+                
+                return f"[INFO] Website is up and running: {url}, {time}\n"
             else:
-                return f"[CRITICAL] Website is DOWN! Status code: {req.status_code}\n"
+                return f"[CRITICAL] Website is DOWN! Status code: {req.status_code}, {time}\n"
         except requests.exceptions.RequestException:
-            return f"[CRITICAL] Connection error for {url}:\n"
+            return f"[CRITICAL] Connection error for {url}, {time}:\n"
 
 
 

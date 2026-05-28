@@ -16,7 +16,7 @@ class LogManager():
                     os.rename(self.log_path, f"{new_filename}")
                     self.archiver.logs_in_dir(f"{new_filename}")
                     with open(self.log_path, "a") as file:
-                        file.write("[INFO] Log rotated successfully\n")
+                        file.write(f"[INFO] Log rotated successfully: {timestamp}\n")
                         logging.info("Выполнено успешно")
             else:
                 logging.info("Файл не найден или размер меньше")
