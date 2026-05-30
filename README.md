@@ -16,7 +16,8 @@
 
 
 ## ***Архитектура*** :house:
-<pre style="overflow-x: auto; white-space: pre; font-family: monospace;">
+<div style="width: 100%; overflow-x: auto; display: block;">
+  <pre style="white-space: pre !important; word-break: keep-all !important; word-wrap: normal !important; font-family: monospace; background-color: #0d1117; padding: 16px; border-radius: 6px; color: #c9d1d9; display: inline-block; min-width: 100%;">
                               ┌──────────────────┐
                               │  Prometheus /    │◄─────────────────┼──────────────────────────────┐  Promethus ходит к Loki по http://loki:3100/metrics и забирает метрики.
   ┌───────────────────────────│                  │                  │                              ▼  Grafana зибирает Логи
@@ -69,5 +70,6 @@
                        ▼                  Чтение данных из Loki
               Генерация Excel               например: за день
               [ Отчет.xlsx ]
-           В эксель красивая табличку о всех логах и круговая диаграмма по ним
-</pre>
+           В эксель красивая табличку о всех логах и круговая диаграмма по ним.
+    </pre>
+</div>
