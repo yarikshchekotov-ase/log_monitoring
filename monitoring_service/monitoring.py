@@ -36,7 +36,7 @@ async def check_url_async(client, url):
 
 
 
-class AsyncDemon():
+class AsyncDaemon():
     def __init__(self, urls, logs_path, archiver):
         self.urls = urls
         self.logs_path = logs_path
