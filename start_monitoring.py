@@ -3,11 +3,13 @@ from monitoring_service.loader import ConfigLoad
 from service_log_manager.log_manager import LogManager
 import validators
 import logging
-from service_log_manager.archiver import Archiver
+from monitoring_service.archiver import Archiver
 import asyncio
+from faststream.rabbit import RabbitBroker
+from faststream import FastStream
 
 logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")
-
+broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
 logger = logging.getLogger(__name__)
 
 async def main():
@@ -22,9 +24,9 @@ async def main():
             valid_urls.append(url)
         else:
             logger.info("URL адрес не верный")
-    archiver = Archiver("service_log_manager/logs")
-    log_manager = LogManager(log_path, max_size, archiver)
-    checker = AsyncDemon(valid_urls, log_path, log_manager)
+    dir = "service_log_manager\\logs"
+    archiver = Archiver(log_path, max_size, dir)
+    checker = AsyncDemon(valid_urls, log_path, archiver)
     await checker.checker()
 try:
     if __name__ == "__main__":
