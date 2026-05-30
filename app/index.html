@@ -1,33 +1,323 @@
 
 
 <!DOCTYPE html>
-    <html lang="ru">
-        <!-- Сгенерировано нейросетью  -->
-        <head>
-            <meta charset="UTF-8">
-            <title></title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f9; text-align: center; }
-                button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
-                button:hover { background: #0056b3; }
-                .status { margin-top: 20px; font-weight: bold; color: green; }
-            </style>
-        </head>
-        <body>
-            <h1></h1>
-            <p>Нажимай на кнопку, чтобы генерировать трафик и метрики.</p>
-            <button onclick="generateTraffic()">Запрос</button>
-            <div class="status" id="status"></div>
+<html lang="ru">
+<head>
+    <!-- Сгенерировано нейросетью -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        :root {
+            --primary-color: #fc3f1d; 
+            --secondary-color: #1071e5; 
+            --bg-main: #f6f6f9;
+            --bg-card: #ffffff;
+            --text-dark: #212121;
+            --text-muted: #7f7f7f;
+            --border-color: #e2e4ea;
+        }
 
-            <script>
-                function generateTraffic() {
-                    document.getElementById('status').innerText = 'Запрос отправлен!';
-                    fetch('/').then(() => {
-                        setTimeout(() => {
-                            document.getElementById('status').innerText = 'Успешно! Метрики обновлены в /metrics';
-                        }, 500);
-                    });
-                }
-            </script>
-        </body>
-    </html>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            gap: 2px;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            display: flex;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .search-bar input {
+            border: none;
+            padding: 12px 16px;
+            flex-grow: 1;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #2b5cff 0%, #fc3f1d 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner h1 {
+            margin: 0 0 12px 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .promo-banner p {
+            margin: 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        .product-img-stub {
+            height: 200px;
+            background-color: #f0f1f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .product-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--text-dark);
+            margin: 0 0 16px 0;
+            flex-grow: 1;
+            height: 38px;
+            overflow: hidden;
+        }
+
+        .buy-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .buy-btn:hover {
+            background-color: #0d5cb8;
+        }
+
+        .buy-btn.timeout {
+            background-color: #f59e0b;
+        }
+
+        .buy-btn.critical {
+            background-color: #ef4444;
+        }
+
+        footer {
+            margin-top: 60px;
+            background-color: #1a1a24;
+            color: #a0a0ab;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <a href="#" class="logo" onclick="sendMetric('/')">DevOps<span>Test web page</span></a>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Искать товары, бренды и категории...">
+                <button onclick="sendMetric('/')">Найти</button>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="sendMetric('/')">
+                    <span>🛒</span>
+                    <span>Корзина</span>
+                </button>
+                <button class="nav-btn" onclick="sendMetric('/')">
+                    <span>👤</span>
+                    <span>Войти</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="promo-banner">
+            <h1>Всемирная распродажа электроники</h1>
+            <p>Скидки до 70% на смартфоны, ноутбуки и аксессуары только до конца недели</p>
+        </div>
+
+        <h2 class="section-title">Популярные товары</h2>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-img-stub">Смартфон Pro Max</div>
+                <div class="product-info">
+                    <div class="price">89 990 ₽</div>
+                    <p class="title">Смартфон новейшего поколения с объемом памяти 256 ГБ, черный</p>
+                    <button class="buy-btn" onclick="sendMetric('/')">В корзину</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img-stub">Беспроводные наушники</div>
+                <div class="product-info">
+                    <div class="price">14 490 ₽</div>
+                    <p class="title">Беспроводные наушники с активным шумоподавлением и мощным басом</p>
+                    <button class="buy-btn" onclick="sendMetric('/')">В корзину</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img-stub">Умная колонка Алиса</div>
+                <div class="product-info">
+                    <div class="price">7 990 ₽</div>
+                    <p class="title">Умная колонка с голосовым ассистентом, глубокий звук, серый цвет</p>
+                    <button class="buy-btn timeout" onclick="sendMetric('/break/timeout')">В корзину </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img-stub">Робот-пылесос</div>
+                <div class="product-info">
+                    <div class="price">21 990 ₽</div>
+                    <p class="title">Робот-пылесос с функцией влажной уборки и построением карты комнат</p>
+                    <button class="buy-btn critical" onclick="sendMetric('/break/critical')">В корзину</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 Маркетплейс "Маркетплейс". Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        function sendMetric(endpoint) {
+            console.log(`[Имитация] Переход на эндпоинт: ${endpoint}`);
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        console.error(`Сервер ответил ошибкой: ${response.status}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка отправки метрики на бэкенд:', error);
+                });
+        }
+    </script>
+</body>
+</html>

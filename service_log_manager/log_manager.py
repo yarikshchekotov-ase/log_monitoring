@@ -1,6 +1,7 @@
 import os
 import logging
 from datetime import datetime
+
 class LogManager():
     def __init__(self,log_path, max_size, archiver):
         self.log_path = log_path
@@ -22,3 +23,6 @@ class LogManager():
                 logging.info("Файл не найден или размер меньше")
         except Exception as e:
             logging.exception(f"Error: {e}")
+
+    def f():
+        pass

@@ -1,16 +1,16 @@
-from monitoring import Demon
-from loader import ConfigLoad
-from log_manager import LogManager
+from monitoring_service.monitoring import AsyncDemon
+from monitoring_service.loader import ConfigLoad
+from service_log_manager.log_manager import LogManager
 import validators
 import logging
-from archiver import Archiver
-
+from service_log_manager.archiver import Archiver
+import asyncio
 
 logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")
 
 logger = logging.getLogger(__name__)
 
-def main():
+async def main():
     con = ConfigLoad("config.json")
     config = con.conf_load()
     log_path = config["log_path"]
@@ -22,12 +22,12 @@ def main():
             valid_urls.append(url)
         else:
             logger.info("URL адрес не верный")
-    archiver = Archiver("logs")
-    logmanager = LogManager(log_path, max_size, archiver)
-    checker = Demon(valid_urls, log_path, logmanager)
-    checker.checker()
+    archiver = Archiver("service_log_manager/logs")
+    log_manager = LogManager(log_path, max_size, archiver)
+    checker = AsyncDemon(valid_urls, log_path, log_manager)
+    await checker.checker()
 try:
     if __name__ == "__main__":
-        main()
+        asyncio.run(main())
 except KeyboardInterrupt:
     logger.exception("Завершение программы")
