@@ -17,7 +17,6 @@ async def main():
         config = con.conf_load()
         rabbitmq_config_url = config["rabbitmq_config_url"]
         broker = RabbitBroker(rabbitmq_config_url)
-        
         log_path = config["log_path"]
         max_size = config["max_size_bytes"]
         urls = config["urls"]

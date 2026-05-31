@@ -22,12 +22,13 @@ class Archiver():
         self.max_size = max_size
         self.dir = dir
     def logs(self):
+        '''привызове в демоне этот метод оборачивается в asyncio.to_thread() поэтому не смотря на синхроность данный метод уходит в отдельный поток и не мешает основному'''
         try:
             if os.path.exists(self.log_path):
                 path_size = os.path.getsize(self.log_path) # возвращает размер файла в байтах
                 if path_size > int(self.max_size): # проверка условия
                     timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-                    new_filename = f"log_{timestamp}_{os.path.basename(self.log_path)}"
+                    new_filename = f"log_{timestamp}_{os.path.basename(self.log_path)}" # файл app_log.txt -> превращается файл log_время сейчас_app_log.txt
                     os.rename(self.log_path, f"{new_filename}")
                     self.logs_in_dir(f"{new_filename}")
                     with open(self.log_path, "a") as file:
@@ -56,11 +57,15 @@ class Archiver():
             all_logs = []
             while is_read:
                 log = await f.readline()
+                '''TODO: переделать парсинг логов в Json
+                    if log == "\n": continue 
+                    elif: not log: is_read = False 
+                    else: выполнять весь код который ниже'''
                 log = log.strip()
                 if not log:
                     is_read = False
-                    
                 else:
+                    
                     part_log = log.split('|')
                     level = part_log[0]
                     message = part_log[1]
@@ -75,7 +80,8 @@ class Archiver():
                             timestamp]
                     all_logs.append(logg)
         os.remove(log_file)
-        async with broker:            
+        async with broker:
+            '''TODO: вынести monitoring и dev в конфиг или .env'''
             await broker.publish(
                         message={
                                 "service": "monitoring",

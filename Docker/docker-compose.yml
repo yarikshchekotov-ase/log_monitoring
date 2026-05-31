@@ -7,8 +7,8 @@ services:
       - 9090:9090
     restart: unless-stopped
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prom_data:/var/prometheus
+      - pass
+      - pass
   grafana:
     image: grafana:10.2.0
     container_name: grafana
@@ -19,9 +19,9 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
-      - ./grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+      - pass
 volumes:
-  prom_data:
+  prom_data: pass
 
   rabbitmq:
     image: rabbitmq:4.3.1-management
@@ -35,7 +35,7 @@ volumes:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
-      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - pass
 
   grafana_loki:
     image: grafana/loki:3.7.2
@@ -43,6 +43,8 @@ volumes:
     ports: 
       - "3100:3100"
     restart: unless-stopped
+    volumes:
+      - pass
 
   async_daemon:
     image: pass 
@@ -50,6 +52,8 @@ volumes:
     ports:
       - "500:500"
     restart: unless-stopped
+    volumes:
+      - pass
 
   log_manager:
     iamge: pass
@@ -57,11 +61,16 @@ volumes:
     ports: 
       - "600:600"
     restart: unless-stopped
+    volumes:
+      - pass
     
 
-  analitics:
+# сервис аналитики запускается раз в день
+  analitics: 
     image: pass
     container_name: analitics
     ports: 
       - "700:700"
     restart: unless-stopped
+    volumes:
+      - pass

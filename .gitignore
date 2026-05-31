@@ -7,4 +7,3 @@ config.json
 logs
 app_log.txt
 app_log_old.txt
-req.txt

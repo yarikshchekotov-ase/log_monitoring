@@ -15,6 +15,9 @@ async def check_url_async(client, url):
         timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
         try:
             start_time = time.perf_counter()
+            '''TODO: Риск SSRF-атак 
+            1) добавить в конфиг список урл куда не слать запрос
+            2) Добавить проверку урл на уровне DNS -> socket.gethostbyname'''
             req = await client.get(url, timeout=5.0) # отправляем запрос на сайт
             end_time = time.perf_counter()
             site_speed.labels(url=url).set(end_time-start_time)
@@ -44,7 +47,7 @@ class AsyncDaemon():
         self.is_runnig = True
     async def checker(self):
         start_http_server(8001)
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=False) as client: 
             while self.is_runnig:
                 try:
                     await asyncio.to_thread(self.archiver.logs)

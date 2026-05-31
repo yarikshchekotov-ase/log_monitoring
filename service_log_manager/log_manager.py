@@ -30,5 +30,6 @@ class LogManager():
                 }
             ]
         }
+        '''TODO: в окончательной версии проекта нужно будет заменить localhost на loki т.к внутри сети докер будет ссылать именно на него'''
         await client.post("http://localhost:3100/loki/api/v1/push", json=logs)
-        self.all_logs_push_loki = []
+        self.all_logs_push_loki.clear()
