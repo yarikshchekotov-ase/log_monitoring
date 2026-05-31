@@ -1,7 +1,7 @@
 
 services:
   prometheus:
-    image: dhi.io/prometheus:3.11.3
+    image: prometheus:3.11.3
     container_name: prometheus
     ports:
       - 9090:9090
@@ -10,7 +10,7 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prom_data:/var/prometheus
   grafana:
-    image: dhi.io/grafana:10.2.0
+    image: grafana:10.2.0
     container_name: grafana
     ports:
       - 3000:3000
@@ -25,8 +25,8 @@ volumes:
 
 
   rabbitmq:
-    image: dhi.io/rabbitmq:4.3.1
-    hostname: my-rabbit
+    image: rabbitmq:4.3.1-management
+    hostname: rabbit
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -38,10 +38,8 @@ volumes:
       - ./enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
 
   grafana_loki:
-    image: 
+    image: grafana/loki:3.7.2
     hostname: loki 
     ports: 
       - "3100:3100"
-      - ""
     restart: unless-stopped
-    volumes: 

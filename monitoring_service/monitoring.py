@@ -4,7 +4,7 @@ import logging
 import time
 from datetime import datetime
 from prometheus_client import start_http_server, Counter, Gauge
-
+import aiofiles
 
 site_check_error = Counter("site_error_count", "need_for_test_my_app", labelnames=["url"])
 site_check_succes = Counter("site_succes_conut", "need_for_test_my_app", labelnames=["url"])
@@ -47,12 +47,12 @@ class AsyncDaemon():
         async with httpx.AsyncClient(timeout=10.0) as client:
             while self.is_runnig:
                 try:
-                    self.archiver.logs()
+                    await asyncio.to_thread(self.archiver.logs)
                     await self.archiver.send_to_rabbit()
                     tasks = [check_url_async(client, url) for url in self.urls]
                     logs = await asyncio.gather(*tasks)
-                    with open(self.logs_path, 'a') as file:
-                        file.writelines(logs)
+                    async with aiofiles.open(self.logs_path, 'a') as file:
+                        await file.writelines(logs)
                 except KeyboardInterrupt:
                     logging.exception("Завершение программы")
                     self.is_runnig = False

@@ -3,16 +3,36 @@ from faststream.rabbit import RabbitBroker
 from log_manager import LogManager
 import logging
 import asyncio
+import time 
+from monitoring_service.loader import ConfigLoad
+from faststream.rabbit import RabbitBroker, RabbitQueue
 
-broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
+all_logs_push_loki = []
+service = "start"
+env = "dev"
+log_manager = LogManager(all_logs_push_loki, service, env)
+con = ConfigLoad("config.json")
+config = con.conf_load()
+rabbitmq_config_url = config["rabbitmq_config_url"]
+broker = RabbitBroker(rabbitmq_config_url)
 app = FastStream(broker)
 
+@broker.subscriber(RabbitQueue("logging_analysis", durable=True))
+async def take_json_from_monitoring(service: str, env: str, logs: list[list[str]]):
+    for log in logs:
+        level = log[0]
+        message = log[1]
+        status = log[2]
+        url = log[3]
+        timestamp = time.time_ns()
+        new_log = "|".join([level, message, status, url])
+        all_logs_push_loki.append([str(timestamp), new_log])
+        await log_manager.push_logs_in_loki()
+
 async def start_log_manager():
-    logs_on_pus_in_loki = []
-    service = "start"
-    env = "dev"
-    log_manager = LogManager(logs_on_pus_in_loki, service, env)
     await app.run()
+
+
 
 try:
     if __name__ == "__main__":

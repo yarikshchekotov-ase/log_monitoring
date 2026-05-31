@@ -25,7 +25,7 @@ class Archiver():
                     os.rename(self.log_path, f"{new_filename}")
                     self.logs_in_dir(f"{new_filename}")
                     with open(self.log_path, "a") as file:
-                        file.write(f"[INFO] | Log rotated successfully | 200 | None |{timestamp}\n")
+                        file.write(f"[INFO] | Log rotated successfully | 200 | http://localhost:8000 |{timestamp}\n")
                         logging.info("Выполнено успешно")
             else:
                 logging.info("Файл не найден или размер меньше")
@@ -45,14 +45,15 @@ class Archiver():
 
     
     async def file_logs_to_rabbitmq(self, log_file):
-        
         async with aiofiles.open(log_file, 'r') as f:
             is_read = True
             all_logs = []
             while is_read:
                 log = await f.readline()
+                log = log.strip()
                 if not log:
                     is_read = False
+                    
                 else:
                     part_log = log.split('|')
                     level = part_log[0]
@@ -67,20 +68,19 @@ class Archiver():
                             url,
                             timestamp]
                     all_logs.append(logg)
-        await broker.publish(
-                "Hi!",
-                queue="test",
-                exchange=""
-                #     message={
-                #             "service": "monitoring",
-                #             "env": "dev",
-                #             "logs": all_logs
-                # } , queue="logging_analysis",routing_key=''
-        )
-    
+        os.remove(log_file)
+        async with broker:            
+            await broker.publish(
+                        message={
+                                "service": "monitoring",
+                                "env": "dev",
+                                "logs": all_logs
+                    } , queue="logging_analysis",routing_key=''
+            )
+
     async def send_to_rabbit(self):
             logs_file = glob.glob("service_log_manager\\logs\\*.txt")
-            await broker.connect()
+            
             if logs_file:
                 for log in logs_file:
                     await self.file_logs_to_rabbitmq(log)
