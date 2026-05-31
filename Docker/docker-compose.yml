@@ -23,10 +23,10 @@ services:
 volumes:
   prom_data:
 
-
   rabbitmq:
     image: rabbitmq:4.3.1-management
     hostname: rabbit
+    container_name: rabbit
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -39,7 +39,29 @@ volumes:
 
   grafana_loki:
     image: grafana/loki:3.7.2
-    hostname: loki 
+    container_name: loki 
     ports: 
       - "3100:3100"
+    restart: unless-stopped
+
+  async_daemon:
+    image: pass 
+    container_name: async_daemon
+    ports:
+      - "500:500"
+    restart: unless-stopped
+
+  log_manager:
+    iamge: pass
+    container_name: log_manager
+    ports: 
+      - "600:600"
+    restart: unless-stopped
+    
+
+  analitics:
+    image: pass
+    container_name: analitics
+    ports: 
+      - "700:700"
     restart: unless-stopped

@@ -6,8 +6,14 @@ from faststream.rabbit import RabbitBroker
 import glob
 import logging
 import aiofiles
+from loader import ConfigLoad
 
-broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
+con = ConfigLoad("config.json")
+config = con.conf_load()
+rabbitmq_config_url = config["rabbitmq_config_url"]
+
+
+broker = RabbitBroker(rabbitmq_config_url)
 
 
 class Archiver():

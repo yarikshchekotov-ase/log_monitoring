@@ -1,12 +1,10 @@
 from monitoring_service.monitoring import AsyncDaemon
 from monitoring_service.loader import ConfigLoad
-from service_log_manager.log_manager import LogManager
 import validators
 import logging
 from monitoring_service.archiver import Archiver
 import asyncio
 from faststream.rabbit import RabbitBroker
-from faststream import FastStream
 
 
 logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")

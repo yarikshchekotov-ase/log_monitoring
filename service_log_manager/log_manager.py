@@ -1,12 +1,14 @@
 from httpx import AsyncClient
 from faststream.rabbit import RabbitBroker
 from faststream import FastStream
-from datetime import datetime
+from monitoring_service.loader import ConfigLoad
 
 client = AsyncClient(timeout=10.0)
 
-
-broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
+con = ConfigLoad("config.json")
+config = con.conf_load()
+rabbitmq_config_url = config["rabbitmq_config_url"]
+broker = RabbitBroker(rabbitmq_config_url)
 app = FastStream(broker)
 
 
