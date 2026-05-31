@@ -1,0 +1,47 @@
+
+services:
+  prometheus:
+    image: dhi.io/prometheus:3.11.3
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prom_data:/var/prometheus
+  grafana:
+    image: dhi.io/grafana:10.2.0
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+volumes:
+  prom_data:
+
+
+  rabbitmq:
+    image: dhi.io/rabbitmq:4.3.1
+    hostname: my-rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+
+  grafana_loki:
+    image: 
+    hostname: loki 
+    ports: 
+      - "3100:3100"
+      - ""
+    restart: unless-stopped
+    volumes: 
