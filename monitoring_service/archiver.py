@@ -6,12 +6,14 @@ from faststream.rabbit import RabbitBroker
 import glob
 import logging
 import aiofiles
+import asyncio
 from loader import ConfigLoad
 
 con = ConfigLoad("config.json")
 config = con.conf_load()
 rabbitmq_config_url = config["rabbitmq_config_url"]
-
+env = config["env"]
+service = config["service_monitoring"]
 
 broker = RabbitBroker(rabbitmq_config_url)
 
@@ -30,7 +32,6 @@ class Archiver():
                     timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
                     new_filename = f"log_{timestamp}_{os.path.basename(self.log_path)}" # файл app_log.txt -> превращается файл log_время сейчас_app_log.txt
                     os.rename(self.log_path, f"{new_filename}")
-                    self.logs_in_dir(f"{new_filename}")
                     with open(self.log_path, "a") as file:
                         file.write(f"[INFO] | Log rotated successfully | 200 | http://localhost:8000 |{timestamp}\n")
                         logging.info("Выполнено успешно")
@@ -50,29 +51,25 @@ class Archiver():
         destination = os.path.join(self.dir, file_log)
         shutil.move(file_log, destination)
 
-    
+
     async def file_logs_to_rabbitmq(self, log_file):
         async with aiofiles.open(log_file, 'r') as f:
             is_read = True
             all_logs = []
             while is_read:
                 log = await f.readline()
-                '''TODO: переделать парсинг логов в Json
-                    if log == "\n": continue 
-                    elif: not log: is_read = False 
-                    else: выполнять весь код который ниже'''
-                log = log.strip()
+                if log == "\n":
+                    continue
                 if not log:
                     is_read = False
                 else:
-                    
+                    log = log.strip()
                     part_log = log.split('|')
                     level = part_log[0]
                     message = part_log[1]
                     status_code = part_log[2]
                     url = part_log[3]
                     timestamp = part_log[4]
-                    
                     logg = [level,
                             message,
                             status_code,
@@ -81,21 +78,19 @@ class Archiver():
                     all_logs.append(logg)
         os.remove(log_file)
         async with broker:
-            '''TODO: вынести monitoring и dev в конфиг или .env'''
             await broker.publish(
                         message={
-                                "service": "monitoring",
-                                "env": "dev",
+                                "service": service,
+                                "env": env,
                                 "logs": all_logs
                     } , queue="logging_analysis",routing_key=''
             )
 
     async def send_to_rabbit(self):
-            logs_file = glob.glob("service_log_manager\\logs\\*.txt")
-            
+            found_logs_file = glob.glob("service_log_manager\\log_*.txt")
+            for log_file in found_logs_file:
+                await asyncio.to_thread(self.logs_in_dir, log_file)
+            logs_file = glob.glob("service_log_manager\\logs\\log_*.txt")
             if logs_file:
                 for log in logs_file:
                     await self.file_logs_to_rabbitmq(log)
-
-            await broker.close()
-        

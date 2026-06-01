@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from prometheus_client import start_http_server, Counter, Gauge
 import aiofiles
+import os
 
 site_check_error = Counter("site_error_count", "need_for_test_my_app", labelnames=["url"])
 site_check_succes = Counter("site_succes_conut", "need_for_test_my_app", labelnames=["url"])
@@ -40,22 +41,26 @@ async def check_url_async(client, url):
 
 
 class AsyncDaemon():
-    def __init__(self, urls, logs_path, archiver):
+    def __init__(self, urls, log_path, archiver, max_size):
         self.urls = urls
-        self.logs_path = logs_path
+        self.log_path = log_path
         self.archiver = archiver
         self.is_runnig = True
+        self.max_size = max_size
     async def checker(self):
         start_http_server(8001)
         async with httpx.AsyncClient(timeout=10.0, follow_redirects=False) as client: 
             while self.is_runnig:
                 try:
+                    # здесь отправка архивного файла в папку logs?
                     await asyncio.to_thread(self.archiver.logs)
-                    await self.archiver.send_to_rabbit()
+                    
                     tasks = [check_url_async(client, url) for url in self.urls]
                     logs = await asyncio.gather(*tasks)
                     async with aiofiles.open(self.logs_path, 'a') as file:
                         await file.writelines(logs)
+                        
+                    await self.archiver.send_to_rabbit()
                 except KeyboardInterrupt:
                     logging.exception("Завершение программы")
                     self.is_runnig = False

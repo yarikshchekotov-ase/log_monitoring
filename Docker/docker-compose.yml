@@ -39,7 +39,7 @@ volumes:
 
   grafana_loki:
     image: grafana/loki:3.7.2
-    container_name: loki 
+    container_name: grafana_loki 
     ports: 
       - "3100:3100"
     restart: unless-stopped
@@ -47,30 +47,45 @@ volumes:
       - pass
 
   async_daemon:
-    image: pass 
+    build: 
+      context: .
+      dockerfile: Docker/Dockerfile.monitoring_service
+    image: monitoring_service:latest
     container_name: async_daemon
     ports:
-      - "500:500"
+      - "8001:8001"
     restart: unless-stopped
+    depends_on:
+      prometheus:
+        condition: service_started
+      grafana:
+        condition: service_started
     volumes:
-      - pass
+      - ./config.json:/monitoring_service/config.json:ro
 
   log_manager:
-    iamge: pass
-    container_name: log_manager
-    ports: 
-      - "600:600"
+    build: 
+      context: .
+      dockerfile: Docker/Dockerfile.log_manager
+    image: log_manager:latest
     restart: unless-stopped
-    volumes:
-      - pass
-    
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      grafana_loki:
+        condition: service_started
+      grafana:
+        condition: service_started
+    volumes: 
+      - ./config.json:/service_log_manager/config.json:ro
 
 # сервис аналитики запускается раз в день
-  analitics: 
-    image: pass
+  analitics:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile.analitics
+    image: analitics:latest
     container_name: analitics
-    ports: 
-      - "700:700"
     restart: unless-stopped
     volumes:
       - pass

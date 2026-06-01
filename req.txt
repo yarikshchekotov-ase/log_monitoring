@@ -1,6 +1,0 @@
-prometheus_client
-fastapi 
-uvicorn
-httpx
-faststream
-aiofiles
