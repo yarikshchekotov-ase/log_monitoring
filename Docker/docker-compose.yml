@@ -89,3 +89,15 @@ volumes:
     restart: unless-stopped
     volumes:
       - pass
+  
+  app:
+    build: 
+      context: .
+      dockerfile: Docker/Dockerfile.app
+    image: app:latest
+    container_name: app
+    restart: unless-stopped
+    volumes: 
+      - pass
+    ports: 
+      - "8000:8000"

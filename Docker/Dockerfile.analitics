@@ -2,7 +2,7 @@ FROM python:3.12.11-slim
 
 WORKDIR /service_analitics
 
-COPY requirements/req_analitics_service.txt /service_analitics/
+COPY requirements/req_analitics_service.txt ./
 RUN pip install --no-cache-dir -r req_analitics_service.txt
 
 

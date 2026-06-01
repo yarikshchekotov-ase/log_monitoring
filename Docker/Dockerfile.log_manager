@@ -2,7 +2,7 @@ FROM python:3.12.11-slim
 
 WORKDIR /service_log_manager
 
-COPY requirements/req_log_manager.txt /service_log_manager/
+COPY requirements/req_log_manager.txt ./
 RUN pip install --no-cache-dir -r req_log_manager.txt
 
 
