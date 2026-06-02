@@ -18,7 +18,7 @@
 ## ***Архитектура*** :house:
 
 <p>
-    <img width="200px" src="image.png"/>
+    <img width="2000px" src="image.png"/>
 </p>
 
 
