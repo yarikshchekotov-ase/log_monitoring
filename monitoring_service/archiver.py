@@ -7,7 +7,7 @@ import glob
 import logging
 import aiofiles
 import asyncio
-from loader import ConfigLoad
+from monitoring_service.loader import ConfigLoad
 
 con = ConfigLoad("config.json")
 config = con.conf_load()
@@ -30,7 +30,7 @@ class Archiver():
                 path_size = os.path.getsize(self.log_path) # возвращает размер файла в байтах
                 if path_size > int(self.max_size): # проверка условия
                     timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-                    new_filename = f"log_{timestamp}_{os.path.basename(self.log_path)}" # файл app_log.txt -> превращается файл log_время сейчас_app_log.txt
+                    new_filename = os.path.join(os.path.dirname(self.log_path), f"log_{timestamp}_{os.path.basename(self.log_path)}") # файл app_log.txt -> превращается файл log_время сейчас_app_log.txt
                     os.rename(self.log_path, f"{new_filename}")
                     with open(self.log_path, "a") as file:
                         file.write(f"[INFO] | Log rotated successfully | 200 | http://localhost:8000 |{timestamp}\n")
@@ -47,8 +47,10 @@ class Archiver():
         
         if not os.path.isdir(self.dir):
             os.makedirs(self.dir)
+
+        pure_filename = os.path.basename(file_log)
         
-        destination = os.path.join(self.dir, file_log)
+        destination = os.path.join(self.dir, pure_filename)
         shutil.move(file_log, destination)
 
 

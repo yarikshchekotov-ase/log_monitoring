@@ -6,7 +6,7 @@ from monitoring_service.archiver import Archiver
 import asyncio
 
 
-logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")
+logging.basicConfig(level=logging.ERROR, format="[%(levelname)s] | [%(asctime)s] | %(name)s | %(message)s")
 
 logger = logging.getLogger(__name__)
 

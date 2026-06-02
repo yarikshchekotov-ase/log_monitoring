@@ -2,6 +2,7 @@ FROM python:3.12.11-slim
 
 WORKDIR /monitoring_service
 
+USER appuser
 
 COPY requirements/req_monitoring.txt ./
 RUN pip install --no-cache-dir -r req_monitoring.txt
