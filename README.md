@@ -16,6 +16,12 @@
 
 
 ## ***Архитектура*** :house:
+
+<p>
+    <img width="200px" src="image.png"/>
+</p>
+
+
 <div style="width: 100%; overflow-x: auto; display: block;">
   <pre style="white-space: pre !important; word-break: keep-all !important; word-wrap: normal !important; font-family: monospace; background-color: #0d1117; padding: 16px; border-radius: 6px; color: #c9d1d9; display: inline-block; min-width: 100%;">
                               ┌──────────────────┐
