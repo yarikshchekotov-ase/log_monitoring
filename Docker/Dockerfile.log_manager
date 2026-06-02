@@ -1,11 +1,12 @@
 FROM python:3.12.11-slim
 
 WORKDIR /service_log_manager
-USER appuser
+RUN groupadd --gid 2000 node && useradd --uid 2000 --gid node --shell /bin/bash --create-home node
 
 COPY requirements/req_log_manager.txt ./
 RUN pip install --no-cache-dir -r req_log_manager.txt
 
+USER node
 
-COPY ./service_log_manager/ ./
+COPY --chown=node:node ./service_log_manager/ ./
 CMD [ "python", "start_log_manager.py" ]

@@ -1,12 +1,12 @@
 FROM python:3.12.11-slim
 
 WORKDIR /monitoring_service
-
-USER appuser
+RUN groupadd --gid 2000 node && useradd --uid 2000 --gid node --shell /bin/bash --create-home node
 
 COPY requirements/req_monitoring.txt ./
 RUN pip install --no-cache-dir -r req_monitoring.txt
 
+USER node
 
-COPY ./monitoring_service ./
+COPY --chown=node:node ./monitoring_service ./
 CMD [ "python", "monitoring.py" ] 

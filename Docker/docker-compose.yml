@@ -1,16 +1,16 @@
 version: '3'
 services:
   prometheus:
-    image: prometheus:3.11.3
+    image:  prom/prometheus:v3.11.3
     container_name: prometheus
     ports:
       - 9090:9090
     restart: unless-stopped
     volumes:
-      - pass
-      - pass
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom_data:/prometheus
   grafana:
-    image: grafana:10.2.0
+    image:  grafana/grafana:10.2.0
     container_name: grafana
     ports:
       - 3000:3000
@@ -19,10 +19,7 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
-      - pass
-volumes:
-  prom_data: pass
-
+      - grafana_data:/var/lib/grafana
   rabbitmq:
     image: rabbitmq:4.3.1-management
     hostname: rabbit
@@ -35,7 +32,7 @@ volumes:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
-      - pass
+      - rabbitmq_data:var/lib/rabbitmq
 
   grafana_loki:
     image: grafana/loki:3.7.2
@@ -44,7 +41,7 @@ volumes:
       - "3100:3100"
     restart: unless-stopped
     volumes:
-      - pass
+      - loki_data/loki
 
   async_daemon:
     build: 
@@ -86,9 +83,7 @@ volumes:
       dockerfile: Docker/Dockerfile.analitics
     image: analitics:latest
     container_name: analitics
-    restart: unless-stopped
-    volumes:
-      - pass
+    restart: "no"
   
   app:
     build: 
@@ -97,7 +92,11 @@ volumes:
     image: app:latest
     container_name: app
     restart: unless-stopped
-    volumes: 
-      - pass
     ports: 
       - "8000:8000"
+
+volumes:
+  prom_data: 
+  grafana_data:
+  rabbitmq_data:
+  loki_data:
