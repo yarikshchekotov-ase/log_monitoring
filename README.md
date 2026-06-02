@@ -17,6 +17,7 @@
 
 ## ***Архитектура*** :house:
 
-<p>
-  <img src="image.png" style="image-rendering: pixelated; width: 100%; max-width: 1200px; display: block; margin: 0 auto;" />
+<p style="overflow-x: auto; width: 100%;">
+  <img src="image.png" style="image-rendering: pixelated; width: 1800px; max-width: none; display: block;" alt="Архитектура Docker Compose" />
 </p>
+
