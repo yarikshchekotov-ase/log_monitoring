@@ -18,5 +18,5 @@
 ## ***Архитектура*** :house:
 
 <p>
-    <img width="10000px" src="image.png"/>
+  <img src="image.png" style="image-rendering: pixelated; width: 100%; max-width: 1200px; display: block; margin: 0 auto;" />
 </p>
