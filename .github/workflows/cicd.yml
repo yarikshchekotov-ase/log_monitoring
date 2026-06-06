@@ -15,5 +15,5 @@ jobs:
             uses: actions/checkout@v4
             
           - name: Build Dockerfile
-            run: docker compose -f Docker/docker-compose.yml build 
+            run: docker compose -f docker-compose.yml build 
                 
