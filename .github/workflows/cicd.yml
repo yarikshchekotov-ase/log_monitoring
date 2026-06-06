@@ -16,5 +16,5 @@ jobs:
             
           - name: Build Dockerfile
             run: |
-                cd Docker
+                .
                 docker compose build
